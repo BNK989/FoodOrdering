@@ -26,9 +26,10 @@ const ProductListItem = ({ product } : ProductListItemProps) => {
   const styles = StyleSheet.create({
     container: {
       backgroundColor: '#444',
-      marginHorizontal: 10,
       padding: 10,
       borderRadius: 10,
+      flex: 1,
+      maxWidth: '50%',
     },
     title: {
       fontSize: 20,
@@ -44,5 +45,6 @@ const ProductListItem = ({ product } : ProductListItemProps) => {
     image: {
       width: '100%',
       aspectRatio: 1,
+      resizeMode: 'contain',
     }
   });
