@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, View } from "react-native"
 import Colors from '@/src/constants/Colors'
 
 import type { Product } from '@/src/types'
-import { Link, useLocalSearchParams } from "expo-router"
+import { Link, Stack, useLocalSearchParams } from "expo-router"
 
 export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
 
@@ -14,6 +14,7 @@ const ProductView = ({ product } : ProductViewProps) => {
   const { id } = useLocalSearchParams()
     return (
       <View style={styles.container}>
+        <Stack.Screen options={{ title: 'Details' }} />
         <Text style={styles.title}>TEST {id}</Text>
         {/* <Image source={{ uri: product.image || defaultPizzaImage }} style={styles.image}/>
         <Text style={styles.title}>{product.name}</Text>
