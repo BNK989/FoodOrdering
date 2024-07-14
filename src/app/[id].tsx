@@ -1,30 +1,29 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native"
+import { Image, StyleSheet, Text, View } from "react-native"
 import Colors from '@/src/constants/Colors'
 
 import type { Product } from '@/src/types'
-import { Link } from "expo-router"
+import { Link, useLocalSearchParams } from "expo-router"
 
 export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
 
-type ProductListItemProps = {
+type ProductViewProps = {
     product: Product
 }
 
-const ProductListItem = ({ product } : ProductListItemProps) => {
+const ProductView = ({ product } : ProductViewProps) => {
+  const { id } = useLocalSearchParams()
     return (
-    <Link href={`/${product.id}`} asChild>
-      <Pressable style={styles.container}>
-        <Image source={{ uri: product.image || defaultPizzaImage }} style={styles.image}/>
-        {/* <Image src={product.image} style={styles.image}/> */}
+      <View style={styles.container}>
+        <Text style={styles.title}>TEST {id}</Text>
+        {/* <Image source={{ uri: product.image || defaultPizzaImage }} style={styles.image}/>
         <Text style={styles.title}>{product.name}</Text>
-        <Text style={styles.price}>${product.price}</Text>
-      </Pressable>
-    </Link>
+        <Text style={styles.price}>${product.price}</Text> */}
+      </View>
     )
   
   }
 
-  export default ProductListItem
+  export default ProductView
 
   const styles = StyleSheet.create({
     container: {
@@ -32,7 +31,6 @@ const ProductListItem = ({ product } : ProductListItemProps) => {
       padding: 10,
       borderRadius: 10,
       flex: 1,
-      maxWidth: '50%',
     },
     title: {
       fontSize: 20,
