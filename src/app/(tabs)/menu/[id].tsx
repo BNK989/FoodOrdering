@@ -3,11 +3,12 @@ import Colors from '@/src/constants/Colors'
 import products from "@/assets/data/products"
 import Button from "@/src/components/Button"
 
-import type { Product } from '@/src/types'
+import type { PizzaSize, Product } from '@/src/types'
 import { Link, Stack, useLocalSearchParams } from "expo-router"
 import { useState } from "react"
+import { useCart } from '@/src/providers/CartProvider'
 
-const sizes = ['S', 'M', 'L', 'XL']
+const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']
 
 export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
 
@@ -17,12 +18,15 @@ type ProductViewProps = {
 
 const ProductView = () => {
   const { id } = useLocalSearchParams()
+  const { addItem } = useCart()
   const product = products.find(p => p.id === +id!) as Product
 
-  const [selectedSize, setSelectedSize] = useState('M')
+  const [selectedSize, setSelectedSize] = useState<PizzaSize>('M')
 
   const addToCart = () => {
-    console.warn('adding to cart...' ,  selectedSize)
+    if(!product) return
+    addItem(product, selectedSize)
+
   }
 
   if(!product) {

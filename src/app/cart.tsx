@@ -1,13 +1,16 @@
+import { View, Text, Platform, StyleSheet} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { Platform, StyleSheet } from 'react-native';
+
+import { useCart } from '@/src/providers/CartProvider'
 
 import EditScreenInfo from '@/src/components/EditScreenInfo';
-import { Text, View } from '@/src/components/Themed';
 
 export default function CartScreen() {
+  const { items } = useCart()
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Cart</Text>
+      <Text style={styles.title}>Cart Items: {items.length}</Text>
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
   );
@@ -22,6 +25,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: 'white',
   },
   separator: {
     marginVertical: 30,
