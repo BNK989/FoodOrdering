@@ -4,7 +4,7 @@ import products from "@/assets/data/products"
 import Button from "@/src/components/Button"
 
 import type { PizzaSize, Product } from '@/src/types'
-import { Link, Stack, useLocalSearchParams } from "expo-router"
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router"
 import { useState } from "react"
 import { useCart } from '@/src/providers/CartProvider'
 
@@ -19,6 +19,9 @@ type ProductViewProps = {
 const ProductView = () => {
   const { id } = useLocalSearchParams()
   const { addItem } = useCart()
+
+  const router = useRouter()
+
   const product = products.find(p => p.id === +id!) as Product
 
   const [selectedSize, setSelectedSize] = useState<PizzaSize>('M')
@@ -26,6 +29,7 @@ const ProductView = () => {
   const addToCart = () => {
     if(!product) return
     addItem(product, selectedSize)
+    router.push('/cart')
 
   }
 
