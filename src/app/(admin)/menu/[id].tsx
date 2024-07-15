@@ -7,6 +7,7 @@ import type { PizzaSize, Product } from '@/src/types'
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router"
 import { useState } from "react"
 import { useCart } from '@/src/providers/CartProvider'
+import { FontAwesome } from "@expo/vector-icons"
 
 export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
 
@@ -37,7 +38,24 @@ const ProductView = () => {
     )
   }
     return (
+      
       <View style={styles.container}>
+        <Stack.Screen options={{ 
+          title: 'product', 
+          headerRight: () => (
+            <Link href={`/(admin)/menu/create?id=${product.id}`} asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="pencil-square-o"
+                    size={25}
+                    color={Colors.light.tint}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+      ) }} />
         <Stack.Screen options={{ title: product.name }} />
         <Image source={{ uri: product.image || defaultPizzaImage }} style={styles.image}/>
         <Text style={styles.title}>{product.name}</Text>
