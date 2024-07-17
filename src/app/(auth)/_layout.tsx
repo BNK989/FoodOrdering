@@ -1,5 +1,11 @@
-import { Stack } from 'expo-router';
+import { useAuth } from '@/src/providers/AuthProvider'
+import { Redirect, Stack } from 'expo-router'
 
 export default function AuthLayout() {
-  return <Stack screenOptions={{ headerShown: true }}/>;
-};
+  // const { session } = useAuth()
+  // if (session) {
+  //   return <Redirect href={'/'} />
+  // }
+
+  return <Stack screenOptions={{ headerShown: true }}/>
+}

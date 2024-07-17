@@ -5,6 +5,7 @@ import Button from '@/src/components/Button'
 import { Link, Stack } from 'expo-router'
 import Colors from '@/src/constants/Colors'
 import { supabase } from '@/src/lib/supabase'
+import { useAuth } from '@/src/providers/AuthProvider'
 
 
 export default function Signin() {
@@ -44,6 +45,23 @@ export default function Signin() {
         }
         return true
       }
+
+  const { session } = useAuth()
+  if(session){
+    return (
+      <View style={styles.container}>
+         <Stack.Screen options={{ title: 'Sign out' }} />
+    <Button 
+    onPress={() => supabase.auth.signOut()} 
+    style={{ marginTop: 10, backgroundColor: 'transparent', borderColor: Colors.light.tint, borderWidth: 1 }}
+    text="Sign out" 
+  />
+  <Link href={'/'} asChild>
+    <Button text="Back home" style={styles.switchBtn} />
+  </Link>
+  </View>
+  )
+  }
 
 
   return (
