@@ -8,6 +8,7 @@ import { defaultPizzaImage } from '@/src/components/ProductListItem'
 import Colors from '@/src/constants/Colors'
 import products from "@/assets/data/products"
 import { Product } from '@/src/types'
+import { useInsertProduct } from '@/src/api/products'
 
 
 export function CreateProductScreen() {
@@ -18,6 +19,8 @@ export function CreateProductScreen() {
 
   const { id } = useLocalSearchParams()
   const isUpdate = !!id
+
+  const { mutate : insertProduct } = useInsertProduct()
 
   const product = products.find(p => p.id === +id!) as Product
 
@@ -60,7 +63,15 @@ export function CreateProductScreen() {
   }
 
   const onsubmit = () => {
-    isUpdate ? updateItem() : createItem()
+    if(isUpdate){
+      updateItem()
+    } else {
+      insertProduct({ title, image, price: parseFloat(price) }, {
+        onSuccess: () => Alert.alert('Success', 'Product created'),
+        onError: (error) => Alert.alert('Error', error.message),
+        onSettled: () => resetForm()
+      })
+    }
   }
 
   const updateItem = () => {
@@ -69,11 +80,7 @@ export function CreateProductScreen() {
       resetForm()
   }
 
-  const createItem = () => {
-    if(!validateForm()) return
-      console.warn(title, price, issue)
-      resetForm()
-  }
+  
   const confirmDelete = () => {
       Alert.alert("Confirm", "are you sure you want to delete this item?", [
         { text: "Cancel", style: "cancel" },

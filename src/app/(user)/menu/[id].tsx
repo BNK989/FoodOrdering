@@ -1,12 +1,12 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native"
+import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from "react-native"
 import Colors from '@/src/constants/Colors'
-import products from "@/assets/data/products"
 import Button from "@/src/components/Button"
 
 import type { PizzaSize, Product } from '@/src/types'
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router"
 import { useState } from "react"
 import { useCart } from '@/src/providers/CartProvider'
+import { useProduct } from "@/src/api/products"
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']
 
@@ -17,14 +17,16 @@ type ProductViewProps = {
 }
 
 const ProductView = () => {
-  const { id } = useLocalSearchParams()
+  const { id: idString } = useLocalSearchParams();
+  const id = idString ? parseFloat(typeof idString === 'string' ? idString : idString[0]) : null
   const { addItem } = useCart()
-
   const router = useRouter()
-
-  const product = products.find(p => p.id === +id!) as Product
-
+  const { data: product, error, isLoading } = useProduct(id ?? 0)
   const [selectedSize, setSelectedSize] = useState<PizzaSize>('M')
+  
+  if(!id) return <Text style={{color: 'red'}}>Missing product ID</Text>
+  if(isLoading) return <ActivityIndicator size="large" color="#ddd" />
+  if(error) return <Text style={{color: 'red'}}>error while loading products</Text>
 
   const addToCart = () => {
     if(!product) return

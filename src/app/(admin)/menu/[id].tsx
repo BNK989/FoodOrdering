@@ -1,44 +1,23 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native"
-import Colors from '@/src/constants/Colors'
-import products from "@/assets/data/products"
-import Button from "@/src/components/Button"
-
-import type { PizzaSize, Product } from '@/src/types'
+import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from "react-native"
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router"
-import { useState } from "react"
-import { useCart } from '@/src/providers/CartProvider'
+
+import Colors from '@/src/constants/Colors'
+import { useProduct } from "@/src/api/products"
 import { FontAwesome } from "@expo/vector-icons"
 
 export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
 
-type ProductViewProps = {
-    product: Product
-}
-
 const ProductView = () => {
-  const { id } = useLocalSearchParams()
-  const { addItem } = useCart()
+  const { id: idString } = useLocalSearchParams()
+  const id = idString ? parseFloat(typeof idString === 'string' ? idString : idString[0]) : null
+  const { data: product, error, isLoading } = useProduct(id ?? 0)
 
-  const router = useRouter()
 
-  const product = products.find(p => p.id === +id!) as Product
+  if(!id) return <Text style={{color: 'red'}}>Missing product ID</Text>
+  if(isLoading) return <ActivityIndicator size="large" color="#ddd" />
+  if(error) return <Text style={{color: 'red'}}>error while loading products</Text>
 
-  const [selectedSize, setSelectedSize] = useState<PizzaSize>('M')
-
-  const addToCart = () => {
-    if(!product) return
-    addItem(product, selectedSize)
-    router.push('/cart')
-
-  }
-
-  if(!product) {
     return (
-      <Text>Product not found</Text>
-    )
-  }
-    return (
-      
       <View style={styles.container}>
         <Stack.Screen options={{ 
           title: 'product', 
