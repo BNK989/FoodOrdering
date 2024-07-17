@@ -1,15 +1,35 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, StyleSheet, Text, TextInput, View } from 'react-native'
 
 import Button from '@/src/components/Button'
 import { Link, Stack } from 'expo-router'
 import Colors from '@/src/constants/Colors'
+import { supabase } from '@/src/lib/supabase'
 
 
 export default function Signin() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [issue, setIssue] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    async function signInWithEmail() {
+      if(!validate()) return
+      setLoading(true)
+      const {data, error} = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      
+      if (error) {
+        setIssue(error.message)
+        Alert.alert(error.message)
+      }
+      if (data) {
+        console.warn('signUp Okay,', data)
+      }
+      setLoading(false)
+    }
 
     const validate = () => {
         setIssue('')
@@ -25,11 +45,6 @@ export default function Signin() {
         return true
       }
 
-    const handleSubmit = () => {
-    if(!validate()) return
-        console.warn(email, password)
-    }
-
 
   return (
     <View style={styles.container}>
@@ -39,7 +54,7 @@ export default function Signin() {
         <Text style={styles.text}>Password</Text>
         <TextInput style={styles.input} value={password} onChangeText={setPassword} placeholder='●●●●●●' placeholderTextColor={'#ddd'} textContentType='password' secureTextEntry={true}></TextInput>
         {issue && <Text style={styles.issueText}>{issue}</Text>}
-        <Button onPress={handleSubmit} text="Sign in" />
+        <Button onPress={signInWithEmail} text={loading ? 'Loading...' : 'Sign in'} disabled={loading} style={styles.switchBtn} />
         <Link href={'/(auth)/sign-up'} asChild>
             <Button text="Create an account" style={styles.switchBtn} />
         </Link>
