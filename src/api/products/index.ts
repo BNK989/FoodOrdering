@@ -12,7 +12,7 @@ export const useProductList = () => {
     })
 }
 
-export const useProduct = (id: number | null = 0) => {
+export const useProduct = (id: number = 0) => {
     return useQuery({
         queryKey: ['products', id],
         queryFn: async () => {

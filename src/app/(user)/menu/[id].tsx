@@ -2,7 +2,7 @@ import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'rea
 import Colors from '@/src/constants/Colors'
 import Button from '@/src/components/Button'
 
-import type { PizzaSize, Product } from '@/src/types'
+import type { PizzaSize, Tables } from '@/src/types'
 import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { useState } from 'react'
 import { useCart } from '@/src/providers/CartProvider'
@@ -14,7 +14,7 @@ export const defaultPizzaImage =
     'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
 
 type ProductViewProps = {
-    product: Product
+    product: Tables<'products'>
 }
 
 const ProductView = () => {
