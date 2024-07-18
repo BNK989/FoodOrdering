@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store'
 import { createClient } from '@supabase/supabase-js'
 import { Database } from '@/src/database.types'
 
-// To refresh data run: pnpx supabase gen types typescript --project-id hpyqjlkkfhlsgkaxhvrv > src/databases.types.ts
+// To refresh data run: pnpx supabase gen types typescript --project-id hpyqjlkkfhlsgkaxhvrv > src/database.types.ts
 
 const ExpoSecureStoreAdapter = {
     getItem: async (key: string) => {

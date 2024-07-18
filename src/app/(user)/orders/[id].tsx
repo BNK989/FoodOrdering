@@ -1,37 +1,40 @@
-import { View, Text, StyleSheet, FlatList } from 'react-native'
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native'
 import { Stack, useLocalSearchParams } from 'expo-router'
-import orders from '@/assets/data/orders'
 import OrderListItem from '@/components/OrderListItem'
 import OrderItemListItem from '@/src/components/OrderItemListItem'
+import { useOrderDetails } from '@/src/api/orders'
 
 export default function OrderDetailScreen() {
-  const { id } = useLocalSearchParams()
+    const { id: idString } = useLocalSearchParams()
+    const id = idString
+        ? parseFloat(typeof idString === 'string' ? idString : idString?.[0])
+        : 0
 
-  const order = orders.find((o) => o.id.toString() === id)
+    const { data: order, error, isLoading } = useOrderDetails(id)
+    if (isLoading) return <ActivityIndicator size="large" color="#ddd" />
+    if (error) return <Text>error while loading orders</Text>
+    if (!order) return <Text>Order not found!</Text>
 
-  if (!order) {
-    return <Text>Order not found!</Text>
-  }
+    return (
+        <View style={styles.container}>
+            <Stack.Screen options={{ title: `Order #${order.id}` }} />
 
-  return (
-    <View style={styles.container}>
-      <Stack.Screen options={{ title: `Order #${order.id}` }} />
+            <OrderListItem order={order} />
 
-      <OrderListItem order={order} />
-
-      <FlatList
-        data={order.order_items}
-        renderItem={({ item }) => <OrderItemListItem item={item} />}
-        contentContainerStyle={{ gap: 10 }}
-      />
-    </View>
-  )
+            <FlatList
+                data={order.order_items}
+                // @ts-ignore
+                renderItem={({ item }) => <OrderItemListItem item={item} />}
+                contentContainerStyle={{ gap: 10 }}
+            />
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    flex: 1,
-    gap: 10,
-  },
+    container: {
+        padding: 10,
+        flex: 1,
+        gap: 10,
+    },
 })
