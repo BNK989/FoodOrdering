@@ -12,7 +12,7 @@ export const useProductList = () => {
     })
 }
 
-export const useProduct = (id: number) => {
+export const useProduct = (id: number | null = 0) => {
     return useQuery({
         queryKey: ['products', id],
         queryFn: async () => {
@@ -46,6 +46,33 @@ export const useInsertProduct = () => {
         },
         async onSuccess() {
             await queryClient.invalidateQueries({ queryKey: ['products'] })
+        },
+        //onError(err)
+    })
+}
+
+export const useUpdateProduct = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        async mutationFn(data: any) {
+            const { data: updatedProduct, error } = await supabase
+                .from('products')
+                .update({
+                    name: data.title,
+                    image: data.image,
+                    price: data.price,
+                })
+                .eq('id', data.id)
+                .select()
+                .single()
+
+            if (error) throw new Error(error.message)
+            return updatedProduct
+        },
+        async onSuccess(_, { id }) {
+            await queryClient.invalidateQueries({ queryKey: ['products'] })
+            await queryClient.invalidateQueries({ queryKey: ['products', id] })
         },
         //onError(err)
     })

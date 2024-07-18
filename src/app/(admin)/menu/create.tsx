@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     View,
     Text,
@@ -8,15 +8,13 @@ import {
     TouchableOpacity,
     Alert,
 } from 'react-native'
-import { router, Stack, useLocalSearchParams } from 'expo-router'
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import * as ImagePicker from 'expo-image-picker'
 
 import Button from '@/src/components/Button'
 import { defaultPizzaImage } from '@/src/components/ProductListItem'
 import Colors from '@/src/constants/Colors'
-import products from '@/assets/data/products'
-import { Product } from '@/src/types'
-import { useInsertProduct } from '@/src/api/products'
+import { useInsertProduct, useProduct, useUpdateProduct } from '@/src/api/products'
 
 export function CreateProductScreen() {
     const [title, setTitle] = useState('')
@@ -24,12 +22,25 @@ export function CreateProductScreen() {
     const [image, setImage] = useState<string | null>(null)
     const [issue, setIssue] = useState('')
 
-    const { id } = useLocalSearchParams()
-    const isUpdate = !!id
+    const { id: idString } = useLocalSearchParams()
+    const id = idString
+        ? parseFloat(typeof idString === 'string' ? idString : idString?.[0])
+        : null
+    const isUpdate = !!idString
 
     const { mutate: insertProduct } = useInsertProduct()
+    const { mutate: updateProduct } = useUpdateProduct()
+    const { data: updatingProduct } = useProduct(id)
 
-    const product = products.find((p) => p.id === +id!) as Product
+    const router = useRouter()
+
+    useEffect(() => {
+        if (updatingProduct) {
+            setTitle(updatingProduct.name)
+            setPrice(updatingProduct.price.toString())
+            setImage(updatingProduct.image)
+        }
+    }, [updatingProduct])
 
     const resetForm = () => {
         setTitle('')
@@ -69,28 +80,29 @@ export function CreateProductScreen() {
         return true
     }
 
-    const onsubmit = () => {
-        if (isUpdate) {
-            updateItem()
-        } else {
-            insertProduct(
-                { title, image, price: parseFloat(price) },
-                {
-                    onSuccess: () => {
-                        Alert.alert('Success', 'Product created')
-                        router.push('/admin/menu')
-                    },
-                    onError: (error) => Alert.alert('Error', error.message),
-                    onSettled: () => resetForm(),
-                },
-            )
-        }
+    const postUpdateFn = {
+        onSuccess: () => {
+            router.back()
+        },
+        onError: (error: any) => Alert.alert('Error', error.message),
+        onSettled: () => resetForm(),
     }
 
-    const updateItem = () => {
+    const onsubmit = () => {
         if (!validateForm()) return
-        console.warn(title, price, issue)
-        resetForm()
+        if (isUpdate) {
+            updateProduct(
+                {
+                    id,
+                    title,
+                    image,
+                    price: parseFloat(price),
+                },
+                postUpdateFn,
+            )
+        } else {
+            insertProduct({ title, image, price: parseFloat(price) }, postUpdateFn)
+        }
     }
 
     const confirmDelete = () => {
