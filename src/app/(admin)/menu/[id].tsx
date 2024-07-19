@@ -4,6 +4,7 @@ import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import Colors from '@/src/constants/Colors'
 import { useProduct } from '@/src/api/products'
 import { FontAwesome } from '@expo/vector-icons'
+import RemoteImage from '@/src/components/RemoteImage'
 
 export const defaultPizzaImage =
     'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
@@ -18,6 +19,7 @@ const ProductView = () => {
     if (!id) return <Text style={{ color: 'red' }}>Missing product ID</Text>
     if (isLoading) return <ActivityIndicator size="large" color="#ddd" />
     if (error) return <Text style={{ color: 'red' }}>error while loading products</Text>
+    if (!product) return <Text style={{ color: 'red' }}>No product found</Text>
 
     return (
         <View style={styles.container}>
@@ -44,8 +46,9 @@ const ProductView = () => {
                 }}
             />
             <Stack.Screen options={{ title: product.name }} />
-            <Image
-                source={{ uri: product.image || defaultPizzaImage }}
+            <RemoteImage
+                path={product.image}
+                fallback={defaultPizzaImage}
                 style={styles.image}
             />
             <Text style={styles.title}>{product.name}</Text>
