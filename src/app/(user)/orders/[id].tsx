@@ -3,6 +3,7 @@ import { Stack, useLocalSearchParams } from 'expo-router'
 import OrderListItem from '@/components/OrderListItem'
 import OrderItemListItem from '@/src/components/OrderItemListItem'
 import { useOrderDetails } from '@/src/api/orders'
+import { useUpdateOrderSubscription } from '@/src/api/orders/subscription'
 
 export default function OrderDetailScreen() {
     const { id: idString } = useLocalSearchParams()
@@ -11,6 +12,7 @@ export default function OrderDetailScreen() {
         : 0
 
     const { data: order, error, isLoading } = useOrderDetails(id)
+    useUpdateOrderSubscription(id)
     if (isLoading) return <ActivityIndicator size="large" color="#ddd" />
     if (error) return <Text>error while loading orders</Text>
     if (!order) return <Text>Order not found!</Text>

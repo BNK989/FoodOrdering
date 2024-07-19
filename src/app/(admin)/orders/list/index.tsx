@@ -1,9 +1,16 @@
 import OrderListItem from '@/components/OrderListItem'
 import { useAdminOrderList } from '@/src/api/orders'
+import { useInsertOrderSubscription } from '@/src/api/orders/subscription'
+import { supabase } from '@/src/lib/supabase'
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native'
 
 export default function OrdersScreen() {
     const { data: orders, error, isLoading } = useAdminOrderList()
+
+    useInsertOrderSubscription()
+
     if (isLoading) return <ActivityIndicator size="large" color="#ddd" />
     if (error) return <Text>error while loading orders</Text>
 
